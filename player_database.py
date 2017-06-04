@@ -5,10 +5,12 @@ def check_db_exists():
     """doc string"""
     my_file = 'playerdb.txt'
     if os.path.isfile(my_file):
-        print "exists"
+        print "log... db exists."
+        return True
     else:
-        print "db does not exist. creating db"
+        print "log... db does not exist. creating db"
         create_db()
+        return False
 
 def create_db():
     """doc string"""
@@ -16,22 +18,26 @@ def create_db():
     my_file = 'playerdb.txt'
     with open(my_file, 'w') as f:
         f.write(header)
-        print "db created"
+        print "log... db created."
 
-def add_player(pname='carzola', pteam='arsenal', ppos='mf'):
+def check_player_exists():
     """doc string"""
-    ### CHANE THE ORDER OF ASSIGNMENT ###
+    print "method_100"
+
+def add_player(pname, pteam, ppos):
+    """doc string"""
     player_name = pname
     player_team = pteam
     player_position = ppos
     player_number = "8"
+    ### CHANE THE ORDER OF ASSIGNMENT ###
     player = player_number + " " + player_name + " " + player_team + " " + player_position
     my_file = 'playerdb.txt'
     with open(my_file, 'w') as f:
         f.write(player)
-        print "player added."
+        print "log... player added."
 
-def find_player(pname='carzola'):
+def find_player(pname):
     """doc string"""
     player_name = pname
     my_file = 'playerdb.txt'
@@ -40,37 +46,41 @@ def find_player(pname='carzola'):
             if player_name in line:
                 player_stats = line.split(" ")
                 player_number, player_name, player_team, player_position = player_stats
-                print player_number
-                print player_name
-                print player_team
-                print player_position
+                print "log... ", player_number
+                print "log... ", player_name
+                print "log... ", player_team
+                print "log... ", player_position
                 #print player_stats
-                print player_name, "found."
+                print "log... ", player_name, "found."
                 return player_number, player_name, player_team, player_position
             else:
-                print "player not found."
+                print "log... player not found."
 
 def list_player(pname):
     """doc string"""
-    player_number, player_name, player_team, player_position = player_stats = find_player()
-    print("method_7")
+    player_number, player_name, player_team, player_position = player_stats = find_player(pname)
+    print "player number: ", player_number
+    print "player name: ", player_name
+    print "player team: ", player_team
+    print "player position: ", player_position
+    print "method_7"
 
 def update_player():
     """doc string"""
     player_number, player_name, player_team, player_position = player_stats = find_player()
-    print("method_3")
+    print "method_3"
     
 def delete_player():
     """doc string"""
-    print("method_4")
+    print "method_4"
     
 def list_all_players():
     """doc string"""
-    print("method_5")
+    print "method_5"
     
 def get_player():
     """doc string"""    
-    print("method_6")
+    print "method_6"
     
 #write db column titles
 #playerdb = "playerdb.txt"
@@ -78,7 +88,9 @@ def get_player():
 #f.write("player_name, player_team, player_pos")
 #f.close()
 
-check_db_exists()
-add_player()
-find_player()
+if check_db_exists() != True:
+    create_db() 
+add_player('carzola', 'arsenal', 'mf')
+find_player('carzola')
+list_player('carzola')
 #create_db()
