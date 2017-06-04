@@ -7,7 +7,7 @@ def check_db_exists():
     if os.path.isfile(my_file):
         print "exists"
     else:
-        print "does not exist. creating db"
+        print "db does not exist. creating db"
         create_db()
 
 def create_db():
@@ -18,12 +18,13 @@ def create_db():
         f.write(header)
         print "db created"
 
-def add_player(pname='carzola. s', pteam='arsenal', ppos='mf'):
+def add_player(pname='carzola', pteam='arsenal', ppos='mf'):
     """doc string"""
+    ### CHANE THE ORDER OF ASSIGNMENT ###
     player_name = pname
     player_team = pteam
     player_position = ppos
-    player_number = "0"
+    player_number = "8"
     player = player_number + " " + player_name + " " + player_team + " " + player_position
     my_file = 'playerdb.txt'
     with open(my_file, 'w') as f:
@@ -37,13 +38,26 @@ def find_player(pname='carzola'):
     with open(my_file, 'r') as f:
         for line in f:
             if player_name in line:
-                print line
+                player_stats = line.split(" ")
+                player_number, player_name, player_team, player_position = player_stats
+                print player_number
+                print player_name
+                print player_team
+                print player_position
+                #print player_stats
                 print player_name, "found."
+                return player_number, player_name, player_team, player_position
             else:
                 print "player not found."
 
+def list_player(pname):
+    """doc string"""
+    player_number, player_name, player_team, player_position = player_stats = find_player()
+    print("method_7")
+
 def update_player():
     """doc string"""
+    player_number, player_name, player_team, player_position = player_stats = find_player()
     print("method_3")
     
 def delete_player():
