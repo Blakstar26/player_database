@@ -2,7 +2,21 @@
 import os
 
 def check_db_exists():
-    """doc string"""
+""" 
+This functions checks that database exists. 
+If it exists, returns True, else returns False. 
+Takes no arguments. 
+Args:
+    no arguments
+"""
+"""
+Test
+    print check_db_exists()
+"""
+""" 
+fix 
+"""
+
     my_file = 'playerdb.txt'
     if os.path.isfile(my_file):
         print "log... db exists."
@@ -12,16 +26,55 @@ def check_db_exists():
         return False
 
 def create_db():
-    """doc string"""
+""" 
+This function creates a database if none exists. 
+First checking if databse exists, creating 
+a database, and then returns True. If database exists 
+or cannot be created for some reason, print to log 
+and return False. Takes no arguments. 
+Args: 
+    no arguments
+"""
+"""
+Test
+    print create_db()
+"""
+""" 
+fix 
+"""
     ### CHANE THE ORDER OF ASSIGNMENT ###
-    header = "player_number, player_name, player_team, player_pos\n"
+    #header = "player_number, player_name, player_team, player_pos\n"
     my_file = 'playerdb.txt'
-    with open(my_file, 'w') as f:
-        f.write(header)
-        print "log... db created."
+    if check_db_exists():
+        with open(my_file, 'w') as f:
+            #f.write(header)
+            f.write("start db")
+            print "log... db created."
+            return True
+    else:
+        print "log... cannot create db. already exists?"
+        return False
 
 def check_player_exists(pname):
-    """doc string"""
+""" 
+This function checks if player exists. 
+Opens file and searches for player name, line by line.
+If found, logs and returns True or logs and returns 
+False if otherwise.
+Args: 
+    pname (str): the player's name as string to process 
+Returns: 
+    True (bool): True for the successful execution of checking player exists
+    False (bool): False for the failed execution of checking player exists
+"""
+""" 
+Test 
+    pname = 'carzola'
+    print check_player_exists(pname)
+"""
+""" 
+fix 
+"""
     player_name = pname
     my_file = 'playerdb.txt'
     with open(my_file, 'r') as f:
@@ -32,10 +85,32 @@ def check_player_exists(pname):
             else:
                 print "log... player does not exist."
                 return False
-    print "method_100"
 
 def add_player(pname, pteam, ppos):
-    """doc string"""
+""" 
+This function adds a player to database. 
+First checking if player already exists.
+If player does not exists, the file is opened
+and player is added, logs and returns True.
+Otherwise doing nothing, logs and returns False.
+Args: 
+    pname (str): the player's name as string to process
+    pteam (str): the player's team as string to process
+    ppos (str): the player's position as string to process
+Returns: 
+    True (bool): True for the successful execution of adding player
+    False (bool): False for the failed execution of adding player
+"""
+""" 
+Test 
+    pname = 'carzola'
+    pteam = 'arsenal'
+    ppos = 'mf'
+    print add_player(pname, pteam, ppos)
+"""
+""" 
+fix 
+"""
     if check_player_exists is True:
         player_name = pname
         player_team = pteam
@@ -47,11 +122,36 @@ def add_player(pname, pteam, ppos):
         with open(my_file, 'w') as f:
             f.write(player)
             print "log... player added."
+            return True
     else:
         print "log... player exists. cannot add player."
+        return False
 
 def find_player(pname):
-    """doc string"""
+""" 
+This function finds a player in database. 
+Opening file and searching for player line by line
+and if found, will load data to buffer, log and
+return player number name team and position as 
+arguments. If not found logs return False. 
+Args: 
+    pname (str): the player's name as string to process
+Returns: 
+    pnumber (str): the player's number as string to process
+    pname (str): the player's name as string to process
+    pteam (str): the player's team as string to process
+    ppos (str): the player's position as string to process
+    True (bool): the successful execution of finding player
+    False (bool): false for failed execution of finding player
+"""
+""" 
+Test 
+    pname = 'carzola'
+    print find_player(pname)
+"""
+""" 
+fix 
+"""
     player_name = pname
     my_file = 'playerdb.txt'
     with open(my_file, 'r') as f:
@@ -64,10 +164,11 @@ def find_player(pname):
                 print "log... ", player_team
                 print "log... ", player_position'''
                 #print player_stats
-                #print "log... ", player_name, "found."
-                return player_number, player_name, player_team, player_position
+                print "log... ", player_name, "found."
+                return player_number, player_name, player_team, player_position, True
             else:
                 print "log... player not found."
+                return False
 
 def list_player(pname):
     """doc string"""
