@@ -130,47 +130,63 @@ def add_player(pid, pnum, pname, pteam, ppos):
         return False
 
 def find_player(pname):
-    """ 
-    This function finds a player in database. 
-    Opening file and searching for player line by line
-    and if found, will load data to buffer, log and
-    return player number name team and position as 
-    arguments. If not found logs return False. 
-    Args: 
+    """
+    This function finds a player in the database.
+    Opening file and searching for player by first name,
+	last name, or both. If found, will load data to buffer,
+    log and return player number name team and position as
+    arguments. If not found logs and return False.
+    Args:
         pname (str): the player's name as string to process
-    Returns: 
-        pnumber (str): the player's number as string to process
-        pname (str): the player's name as string to process
-        pteam (str): the player's team as string to process
-        ppos (str): the player's position as string to process
+    Returns:
+        True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
         True (bool): the successful execution of finding player
+        found_pid (str): the player's internal id as string to process
+        found_pnum (str): the player's number as string to process
+        found_pname (str): the player's name as string to process
+        found_pteam (str): the player's team as string to process
+        found_ppos (str): the player's position as string to process
         False (bool): false for failed execution of finding player
     """
-    """ 
-    Test 
-        pname = 'carzola'
-        print find_player(pname)
     """
-    """ 
-    fix 
+    Test:
+        find_player('carzola')
     """
-    player_name = pname
-    my_file = 'playerdb.txt'
-    with open(my_file, 'r') as f:
-        for line in f:
-            if player_name in line:
-                player_stats = line.split(" ")
-                player_number, player_name, player_team, player_position = player_stats
-                '''print "log: ", player_number
-                print "log: ", player_name
-                print "log: ", player_team
-                print "log: ", player_position'''
-                #print player_stats
-                print "log: ", player_name, "found."
-                return player_number, player_name, player_team, player_position
-            else:
-                print "log: player not found."
-                return False
+    """
+    Fix:
+		- no fixes
+    """
+    find_playername = pname
+	# check if db exists
+    if check_db_exists():
+        # open database
+        db_file_name = 'playerdb'
+        database = sqlite3.connect(db_file_name)
+        # set cursor and find player
+        cursor = database.cursor()
+        cursor.execute('''SELECT playerid, playernumber, playername, playerteam,
+                            playerposition FROM players WHERE playername = ?''', (find_playername,))
+        data = cursor.fetchone()
+        # check if player found
+        if data is not None:
+            # store player data
+            found_pid, found_pnum, found_pname, found_pteam, found_ppos = cursor.fetchone()
+            print "log: find_player(): player found!"
+            print "log: find_player(): player id: ", found_pid
+            print "log: find_player(): player number: ", found_pnum
+            print "log: find_player(): player name: ", found_pname
+            print "log: find_player(): player team: ", found_pteam
+            print "log: find_player(): player position: ", found_ppos
+            # return player data
+            return True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
+        # if player is not found
+        else:
+            print "log: find_player(): player not found"
+            return False
+    else:
+        print "log: find_player(): database does not exist, player cannot be found."
+        return False
+
 def player_id_generator():
     """ 
     This function finds a player in database. 
@@ -278,8 +294,11 @@ def get_new_player_team():
 #f.close()
 
 #check_db_exists()
-create_db()
-add_player(pid='x0', pnum='8', pname='cazorla', pteam='arsenal', ppos='mf')
+#create_db()
+#add_player(pid='x0', pnum='8', pname='carzola', pteam='arsenal', ppos='mf')
+pdetails = find_player('carzola')
+print pdetails[0], pdetails[1], pdetails[2], pdetails[3], pdetails[4], pdetails[5]
+
 #if check_db_exists() != True:
 #    create_db()
 #add_player('carzola', 'arsenal', 'mf')
