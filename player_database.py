@@ -1,157 +1,159 @@
 #!/usr/bin/env python
 import os
+import sqlite3
 
 def check_db_exists():
-""" 
-This functions checks that database exists. 
-If it exists, returns True, else returns False. 
-Takes no arguments. 
-Args:
-    no arguments
-"""
-"""
-Test
-    print check_db_exists()
-"""
-""" 
-fix 
-"""
-
-    my_file = 'playerdb.txt'
+    """
+    This function checks that database exists.
+    If it exists, returns True, else returns False.
+    Takes no arguments.
+    Args:
+        no arguments
+    """
+    """
+    Test
+        print check_db_exists()
+    """
+    """
+    fix
+    """
+    my_file = 'playerdb'
     if os.path.isfile(my_file):
-        print "log... db exists."
+        print "log: check_db_exists(): db exists."
         return True
     else:
-        print "log... db does not exist. creating db."
+        print "log:  check_db_exists(): db does not exist."
         return False
 
 def create_db():
-""" 
-This function creates a database if none exists. 
-First checking if databse exists, creating 
-a database, and then returns True. If database exists 
-or cannot be created for some reason, print to log 
-and return False. Takes no arguments. 
-Args: 
-    no arguments
-"""
-"""
-Test
-    print create_db()
-"""
-""" 
-fix 
-"""
-    ### CHANE THE ORDER OF ASSIGNMENT ###
-    #header = "player_number, player_name, player_team, player_pos\n"
-    my_file = 'playerdb.txt'
+    """
+    This function creates a database if none exists.
+    First checking if databse exists, creating
+    a database, and then returns True. If database exists
+    or cannot be created for some reason, print to log
+    and return False. Takes no arguments.
+    Args:
+        no arguments
+    """
+    """
+    Test
+		create_db()
+    """
+    """
+    fix
+    """
+    # check if db exists
     if check_db_exists():
-        with open(my_file, 'w') as f:
-            #f.write(header)
-            f.write("start db")
-            print "log... db created."
-            return True
-    else:
-        print "log... cannot create db. already exists?"
+        print "log: create_db(): db exists, will not create."
         return False
+    else:
+        # create database
+        db_file_name = 'playerdb'
+        database = sqlite3.connect(db_file_name)
+        print "log: create_db(): db created."
+        # create table and commit to cursor object
+        cursor = database.cursor()
+        cursor.execute('''
+            CREATE TABLE players(id INTEGER PRIMARY KEY, playerid TEXT,
+                                playernumber TEXT, playername TEXT, playerteam TEXT,
+                                playerposition TEXT)    
+        ''')
+        print "log: create_db(): table created."
+        # commit changes
+        database.commit()
+        print "log: create_db(): changes commited."
+        # close database
+        database.close()
+        print "log: create_db(): db closed."
+        return True
 
-def check_player_exists(pname):
-""" 
-This function checks if player exists. 
-Opens file and searches for player name, line by line.
-If found, logs and returns True or logs and returns 
-False if otherwise.
-Args: 
-    pname (str): the player's name as string to process 
-Returns: 
-    True (bool): True for the successful execution of checking player exists
-    False (bool): False for the failed execution of checking player exists
-"""
-""" 
-Test 
-    pname = 'carzola'
-    print check_player_exists(pname)
-"""
-""" 
-fix 
-"""
-    player_name = pname
-    my_file = 'playerdb.txt'
-    with open(my_file, 'r') as f:
-        for line in f:
-            if player_name in line:
-                print "log... player exists."
-                return True
-            else:
-                print "log... player does not exist."
-                return False
-
-def add_player(pname, pteam, ppos):
-""" 
-This function adds a player to database. 
-First checking if player already exists.
-If player does not exists, the file is opened
-and player is added, logs and returns True.
-Otherwise doing nothing, logs and returns False.
-Args: 
-    pname (str): the player's name as string to process
-    pteam (str): the player's team as string to process
-    ppos (str): the player's position as string to process
-Returns: 
-    True (bool): True for the successful execution of adding player
-    False (bool): False for the failed execution of adding player
-"""
-""" 
-Test 
-    pname = 'carzola'
-    pteam = 'arsenal'
-    ppos = 'mf'
-    print add_player(pname, pteam, ppos)
-"""
-""" 
-fix 
-"""
-    if check_player_exists is True:
-        player_name = pname
-        player_team = pteam
-        player_position = ppos
-        player_number = "8"
-        ### CHANE THE ORDER OF ASSIGNMENT ###
-        player = player_number + " " + player_name + " " + player_team + " " + player_position
-        my_file = 'playerdb.txt'
-        with open(my_file, 'w') as f:
-            f.write(player)
-            print "log... player added."
+def add_player(pid, pnum, pname, pteam, ppos):
+    """
+    This function adds a player to database. First checking
+	if database exists, then checking if player exists.
+	If database does not exists, logged and nothing happens,
+	returns False. If player exists, logged and returns False.
+    If database exists, and player does not exist, the database
+	is opened and player is added, logged and returns True.
+    Args:
+		pid (str): the player's internal id number as string to process
+		pnum (str): the player's number as string to process
+        pname (str): the player's name as string to process
+        pteam (str): the player's team as string to process
+        ppos (str): the player's position as string to process
+    Returns:
+        True (bool): True for the successful execution of adding player
+        False (bool): False for the failed execution of adding player
+    """
+    """
+    Test:
+        add_player(pid='x0', pnum='8', pname='cazorla', pteam='arsenal', ppos='mf')
+    """
+    """
+    Fix:
+        - add player last and first names
+		- add player nickname
+    """
+    # check if db exists
+    if check_db_exists():
+        # check if player exists
+        if find_player(pname):
+            print "log: add_player(): player exists, will not add."
+            return False
+        else:
+            print "log: add_player(): player does not exist, adding now."
+            # open database
+            db_file_name = 'playerdb'
+            database = sqlite3.connect(db_file_name)
+            # define player attributes
+            cursor = database.cursor()
+            added_playerid = pid
+            added_playernumber = pnum
+            added_playername = pname
+            added_playerteam = pteam
+            added_playerposition = ppos
+            # insert player
+            cursor.execute('''
+				INSERT INTO players(playerid, playernumber, playername, playerteam,
+                    playerposition) VALUES(?,?,?,?,?)''',
+                           (added_playerid, added_playernumber, added_playername,
+                            added_playerteam, added_playerposition))
+            print "log: add_player(): player added."
+            # committing changes
+            database.commit()
+            # close database
+            database.close()
+            print "log: add_player(): changes committed."
             return True
     else:
-        print "log... player exists. cannot add player."
+        print "log:  add_player(): db does not exist, cannot add player."
         return False
 
 def find_player(pname):
-""" 
-This function finds a player in database. 
-Opening file and searching for player line by line
-and if found, will load data to buffer, log and
-return player number name team and position as 
-arguments. If not found logs return False. 
-Args: 
-    pname (str): the player's name as string to process
-Returns: 
-    pnumber (str): the player's number as string to process
-    pname (str): the player's name as string to process
-    pteam (str): the player's team as string to process
-    ppos (str): the player's position as string to process
-    True (bool): the successful execution of finding player
-    False (bool): false for failed execution of finding player
-"""
-""" 
-Test 
-    pname = 'carzola'
-    print find_player(pname)
-"""
-""" 
-fix 
-"""
+    """ 
+    This function finds a player in database. 
+    Opening file and searching for player line by line
+    and if found, will load data to buffer, log and
+    return player number name team and position as 
+    arguments. If not found logs return False. 
+    Args: 
+        pname (str): the player's name as string to process
+    Returns: 
+        pnumber (str): the player's number as string to process
+        pname (str): the player's name as string to process
+        pteam (str): the player's team as string to process
+        ppos (str): the player's position as string to process
+        True (bool): the successful execution of finding player
+        False (bool): false for failed execution of finding player
+    """
+    """ 
+    Test 
+        pname = 'carzola'
+        print find_player(pname)
+    """
+    """ 
+    fix 
+    """
     player_name = pname
     my_file = 'playerdb.txt'
     with open(my_file, 'r') as f:
@@ -159,22 +161,48 @@ fix
             if player_name in line:
                 player_stats = line.split(" ")
                 player_number, player_name, player_team, player_position = player_stats
-                '''print "log... ", player_number
-                print "log... ", player_name
-                print "log... ", player_team
-                print "log... ", player_position'''
+                '''print "log: ", player_number
+                print "log: ", player_name
+                print "log: ", player_team
+                print "log: ", player_position'''
                 #print player_stats
-                print "log... ", player_name, "found."
-                return player_number, player_name, player_team, player_position, True
+                print "log: ", player_name, "found."
+                return player_number, player_name, player_team, player_position
             else:
-                print "log... player not found."
+                print "log: player not found."
                 return False
+def player_id_generator():
+    """ 
+    This function finds a player in database. 
+    Opening file and searching for player line by line
+    and if found, will load data to buffer, log and
+    return player number name team and position as 
+    arguments. If not found logs return False. 
+    Args:
+        pname (str): the player's name as string to process
+    Returns:
+        pnumber (str): the player's number as string to process
+        pname (str): the player's name as string to process
+        pteam (str): the player's team as string to process
+        ppos (str): the player's position as string to process
+        True (bool): the successful execution of finding player
+        False (bool): false for failed execution of finding player
+    """
+    """
+    Test:
+        player_id_generator()
+    """
+    """
+    Fix:
+        - no fix.
+    """
+    print "log: player_id_generator(): nothing to do."
+    return False
 
 def list_player(pname):
     """doc string"""
-    print "1"
-    player_number, player_name, player_team, player_position = find_player(pname)
-    print "2"
+    playerID = pname
+    player_number, player_name, player_team, player_position = find_player(playerID)
     #player_stats = find_player(pname)
     print "player number: ", player_number
     print "player name: ", player_name
@@ -216,7 +244,7 @@ def update_player(pname, ppos_stat, pteam_stat, pnum_stat):
                     player_stats = player_number + " " + player_name + \
                         " " + player_team + " " + player_position
                     f.write(player_stats)
-                    print "log... player is updated."
+                    print "log: player is updated."
             f.close()
         else:
             return False
@@ -249,11 +277,14 @@ def get_new_player_team():
 #f.write("player_name, player_team, player_pos")
 #f.close()
 
-if check_db_exists() != True:
-    create_db() 
-add_player('carzola', 'arsenal', 'mf')
-find_player('carzola')
-list_player('carzola')
-check_player_exists('carzola')
-update_player('carzola', ppos_stat=True, pteam_stat=True, pnum_stat=True)
+#check_db_exists()
+create_db()
+add_player(pid='x0', pnum='8', pname='cazorla', pteam='arsenal', ppos='mf')
+#if check_db_exists() != True:
+#    create_db()
+#add_player('carzola', 'arsenal', 'mf')
+#find_player('carzola')
+#list_player('carzola') #
+#check_player_exists('carzola') #
+#update_player('carzola', ppos_stat=True, pteam_stat=True, pnum_stat=True)
 #create_db()
