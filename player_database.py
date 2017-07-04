@@ -236,6 +236,84 @@ def player_id_generator(leaguectry, tleague, pteam, nameplayer, numplayer):
         print "log: player_id_generator(): player id cannot be set."
         return False
 
+def update_player(pid, pnum, pname, pteam, ppos):
+    """
+    This function updates a player's details in the database.
+    Opening file and searching for player by first name,
+	last name, or both. If found, will load data to buffer,
+    log and return player number name team and position as
+    arguments. If not found logs and return False.
+    Args:
+        pname (str): the player's name as string to process
+    Returns:
+        True (bool): the successful execution of finding player
+        found_pid (str): the player's internal id as string to process
+        found_pnum (str): the player's number as string to process
+        found_pname (str): the player's name as string to process
+        found_pteam (str): the player's team as string to process
+        found_ppos (str): the player's position as string to process
+        False (bool): false for failed execution of finding player
+    Test:
+        update_player(pname, ppos_stat, pteam_stat, pnum_stat)
+    Fix:
+		- update cursor-set to include player's last name[], first name[],
+            and nickname[].
+        - update cursor-set to include: country of league[],
+            league team is in [], player's team[], player's name[],
+            and player's number[].
+    """
+	#pass player name to find, updated player id, updated player number, updated player name, updated player team, updated player postiion
+	find_playername = pname
+	update_pid = pid
+	update_pnum = pnum
+	update_pteam = pteam
+	update_ppos = ppos
+	# check if database exists
+	if check_db_exists():
+		# database exists. find player on database
+		# is player found, True or False?
+		playerfound = find_player(find_playername)[0]
+		# is returned object a tuple?
+		istuple = isinstance(find_player(find_playername), tuple)
+		if istuple is True and playerfound is True:
+		#if find_player(find_playername):
+			# player exists. retrieve player details log action
+			isbool, curr_pid, curr_pnum, curr_pname, curr_pteam, curr_ppos = find_player(find_playername)
+			
+			
+			print "log: update_player(): player exists, opening database."
+			# open database
+			db_file_name = 'playerdb'
+			database = sqlite3.connect(db_file_name)
+			# set cursor and find player
+			cursor = database.cursor()
+			cursor.execute('''SELECT playerid, playernumber, playername, playerteam,
+								playerposition FROM players WHERE playername = ?''', (find_playername,))
+			data = cursor.fetchone()
+			# check if player found
+			if data is not None:
+				# store player details and log action
+				found_pid, found_pnum, found_pname, found_pteam, found_ppos = cursor.fetchone()
+				print "log: find_player(): player found!"
+				# return True and player data
+				return True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
+			# if player is not found
+			else:
+				# log action and return False
+				print "log: find_player(): player not found"
+				return False
+			return True
+	# retrieve current player details
+	# store 
+	if True:
+		return True
+	else:
+		return False
+    
+def delete_player():
+    """doc string"""
+    print "method_4"
+
 def list_player(pname):
     """
     This function lists all of a players details and statistics.
@@ -273,10 +351,10 @@ def list_player(pname):
     istuple = isinstance(find_player(find_playername), tuple)
     if istuple is True and playerfound is True:
         # store player details
-        rval, list_pid, list_pnum, list_pname, list_pteam, list_ppos = find_player(find_playername)
+        isbool, list_pid, list_pnum, list_pname, list_pteam, list_ppos = find_player(find_playername)
         # log action and list players
         print "log: list_player(): listing player!"
-        print "log: list_player(): ", rval, list_pid, list_pnum, list_pname, list_pteam, list_ppos
+        print "log: list_player(): ", isbool, list_pid, list_pnum, list_pname, list_pteam, list_ppos
         # return True and player details, if successful
         return True, list_pid, list_pnum, list_pname, list_pteam, list_ppos
     #if not tuple or player is not found
@@ -284,50 +362,6 @@ def list_player(pname):
         #log action and return False
         print "log: list_player(): player cannot be listed."
         return False
-
-def update_player(pname, ppos_stat, pteam_stat, pnum_stat):
-    """doc string"""
-    if ppos_stat is False and pteam_stat is False and pnum_stat is False:
-        return False
-    else:
-        if check_player_exists(pname):
-            ### CHANE THE ORDER OF ASSIGNMENT ###
-            player_number, player_name, player_team, player_position = find_player(pname)
-            player_stats = find_player(pname)
-
-            if ppos_stat:
-                new_player_position = get_new_player_position()
-                player_position = new_player_position
-            if pteam_stat:
-                new_player_team = get_new_player_team()
-                player_team = new_player_team
-            if pnum_stat:
-                new_player_number = get_new_player_number()
-                player_number = new_player_number
-
-            #check_db_exists()
-            f = open("playerdb.txt", "r")
-            lines = f.readlines()
-            f.close()
-            f = open("playerdb.txt", "w")
-            outdated_player_stats = player_stats
-            for line in lines:
-                if line != outdated_player_stats + "\n":
-                    f.write(line)
-                else:
-                    ### CHANE THE ORDER OF ASSIGNMENT ###
-                    player_stats = player_number + " " + player_name + \
-                        " " + player_team + " " + player_position
-                    f.write(player_stats)
-                    print "log: player is updated."
-            f.close()
-        else:
-            return False
-    print "method_3"
-    
-def delete_player():
-    """doc string"""
-    print "method_4"
     
 def list_all_players():
     """doc string"""
