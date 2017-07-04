@@ -34,18 +34,24 @@ def create_db():
     Test:
 		create_db()
     Fix:
-        - none.
+        - update player table to include player's last name[], first name[],
+            and nickname[].
+        - update player table to include: country of league[],
+            league team is in [], player's team[], player's name[],
+            and player's number[].
     """
-    # check if db exists
+    # check if database exists
     if check_db_exists():
+        # if db exists. log action and returns False
         print "log: create_db(): db exists, will not create."
         return False
+    # if database does not exists.
     else:
-        # create database
+        # create database and log
         db_file_name = 'playerdb'
         database = sqlite3.connect(db_file_name)
         print "log: create_db(): db created."
-        # create table and commit to cursor object
+        # create table and commit to cursor object and log
         cursor = database.cursor()
         cursor.execute('''
             CREATE TABLE players(id INTEGER PRIMARY KEY, playerid TEXT,
@@ -53,12 +59,13 @@ def create_db():
                                 playerposition TEXT)    
         ''')
         print "log: create_db(): table created."
-        # commit changes
+        # commit changes and log
         database.commit()
         print "log: create_db(): changes commited."
-        # close database
+        # close database and log
         database.close()
         print "log: create_db(): db closed."
+        # return True
         return True
 
 def add_player(pid, pnum, pname, pteam, ppos):
@@ -81,15 +88,20 @@ def add_player(pid, pnum, pname, pteam, ppos):
     Test:
         add_player(pid='x0', pnum='8', pname='cazorla', pteam='arsenal', ppos='mf')
     Fix:
-        - add player last and first names
-		- add player nickname
+        - update player details to include player's last name[], first name[],
+            and nickname[].
+        - update player details to include: country of league[],
+            league team is in [], player's team[], player's name[],
+            and player's number[].
     """
     # check if db exists
     if check_db_exists():
         # check if player exists
         if find_player(pname):
+            # if player exists. log action and return False.
             print "log: add_player(): player exists, will not add."
             return False
+        # if player does not exist
         else:
             print "log: add_player(): player does not exist, adding now."
             # open database
@@ -102,7 +114,7 @@ def add_player(pid, pnum, pname, pteam, ppos):
             added_playername = pname
             added_playerteam = pteam
             added_playerposition = ppos
-            # insert player
+            # add player details
             cursor.execute('''
 				INSERT INTO players(playerid, playernumber, playername, playerteam,
                     playerposition) VALUES(?,?,?,?,?)''',
@@ -113,9 +125,12 @@ def add_player(pid, pnum, pname, pteam, ppos):
             database.commit()
             # close database
             database.close()
+            # log action and return True
             print "log: add_player(): changes committed."
             return True
+    # if databse does not exists
     else:
+        # log action and return False
         print "log:  add_player(): db does not exist, cannot add player."
         return False
 
@@ -139,8 +154,13 @@ def find_player(pname):
     Test:
         find_player('carzola')
     Fix:
-		- no fixes
+		- update cursor-set to include player's last name[], first name[],
+            and nickname[].
+        - update cursor-set to include: country of league[],
+            league team is in [], player's team[], player's name[],
+            and player's number[].
     """
+    # pass search term
     find_playername = pname
 	# check if db exists
     if check_db_exists():
@@ -154,26 +174,24 @@ def find_player(pname):
         data = cursor.fetchone()
         # check if player found
         if data is not None:
-            # store player data
+            # store player details and log action
             found_pid, found_pnum, found_pname, found_pteam, found_ppos = cursor.fetchone()
             print "log: find_player(): player found!"
-            # print "log: find_player(): player id: ", found_pid
-            # print "log: find_player(): player number: ", found_pnum
-            # print "log: find_player(): player name: ", found_pname
-            # print "log: find_player(): player team: ", found_pteam
-            # print "log: find_player(): player position: ", found_ppos
-            # return player data
+            # return True and player data
             return True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
         # if player is not found
         else:
+            # log action and return False
             print "log: find_player(): player not found"
             return False
+    # if database cannot be found
     else:
+        #log action and return False
         print "log: find_player(): database does not exist, player cannot be found."
         return False
 
-def player_id_generator():
-    """ 
+def player_id_generator(leaguectry, tleague, pteam, nameplayer, numplayer):
+    """
     This function finds a player in database.
     Opening file and searching for player line by line
     and if found, will load data to buffer, log and
@@ -189,18 +207,39 @@ def player_id_generator():
         True (bool): the successful execution of finding player
         False (bool): false for failed execution of finding player
     Test:
-        player_id_generator()
+        leaguectry = 'en'
+        tleague = 'pr'
+        pteam = 'ar'
+        nameplayer = 'sc'
+        numplayer = '08'
+        player_id_generator(leaguectry, tleague, pteam, nameplayer, numplayer)
     Fix:
-        - no fix.
+        - update player details to include player's last name[], first name[],
+            and nickname[].
     """
-    id = 1;
-    print "log: player_id_generator(): nothing to do.", id
-    return False
+    # pass player details
+    league_country = leaguectry
+    team_league = tleague
+    player_team = pteam
+    name_player = nameplayer
+    number_player = numplayer
+    # if player details are stored, and true
+    if league_country and team_league and player_team and name_player and number_player:
+        # combine to form unique player id number
+        player_id = league_country + "." + team_league + "." + player_team + "." + name_player + "." + number_player
+        # log and return True
+        print "log: player_id_generator(): player id is:", player_id
+        return True, player_id
+    # if player details are not stored, or any value returns False
+    else:
+        # log failure and return False
+        print "log: player_id_generator(): player id cannot be set."
+        return False
 
 def list_player(pname):
     """
     This function lists all of a players details and statistics.
-    calling find_player() and determine if player was found and 
+    calling find_player() and determine if player was found and
     if returned object is a tuple. player details are returned as
     tuple.
     return True, player id, player number, player name,
@@ -220,7 +259,11 @@ def list_player(pname):
     Test:
         list_player('carzola')
     Fix:
-        - no fixes
+        - update list to include player's last name[], first name[],
+            and nickname[].
+        - update list to include: country of league[],
+            league team is in [], player's team[], player's name[],
+            and player's number[].
     """
     # pass search term
     find_playername = pname
@@ -236,8 +279,9 @@ def list_player(pname):
         print "log: list_player(): ", rval, list_pid, list_pnum, list_pname, list_pteam, list_ppos
         # return True and player details, if successful
         return True, list_pid, list_pnum, list_pname, list_pteam, list_ppos
+    #if not tuple or player is not found
     else:
-        #if not tuple or player is not found, log action and return False
+        #log action and return False
         print "log: list_player(): player cannot be listed."
         return False
 
@@ -301,19 +345,20 @@ def get_new_player_position():
 
 def get_new_player_team():
     return "hull"
-    
-#write db column titles
-#playerdb = "playerdb.txt"
-#f = open(playerdb,'w')
-#f.write("player_name, player_team, player_pos")
-#f.close()
+
 
 #check_db_exists()
 #create_db()
 #add_player(pid='x0', pnum='8', pname='carzola', pteam='arsenal', ppos='mf')
 #pdetails = find_player('carzola')
 #print pdetails[0], pdetails[1], pdetails[2], pdetails[3], pdetails[4], pdetails[5]
-list_player('carzola')
+#list_player('carzola')
+leaguectry = 'en'
+tleague = 'pr'
+pteam = 'ar'
+nameplayer = 'sc'
+numplayer = '08'
+player_id_generator(leaguectry, tleague, pteam, nameplayer, numplayer)
 
 #if check_db_exists() != True:
 #    create_db()
