@@ -9,13 +9,10 @@ def check_db_exists():
     Takes no arguments.
     Args:
         no arguments
-    """
-    """
-    Test
+    Test:
         print check_db_exists()
-    """
-    """
-    fix
+    Fix:
+        - none.
     """
     my_file = 'playerdb'
     if os.path.isfile(my_file):
@@ -34,13 +31,10 @@ def create_db():
     and return False. Takes no arguments.
     Args:
         no arguments
-    """
-    """
-    Test
+    Test:
 		create_db()
-    """
-    """
-    fix
+    Fix:
+        - none.
     """
     # check if db exists
     if check_db_exists():
@@ -84,12 +78,8 @@ def add_player(pid, pnum, pname, pteam, ppos):
     Returns:
         True (bool): True for the successful execution of adding player
         False (bool): False for the failed execution of adding player
-    """
-    """
     Test:
         add_player(pid='x0', pnum='8', pname='cazorla', pteam='arsenal', ppos='mf')
-    """
-    """
     Fix:
         - add player last and first names
 		- add player nickname
@@ -139,7 +129,6 @@ def find_player(pname):
     Args:
         pname (str): the player's name as string to process
     Returns:
-        True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
         True (bool): the successful execution of finding player
         found_pid (str): the player's internal id as string to process
         found_pnum (str): the player's number as string to process
@@ -147,12 +136,8 @@ def find_player(pname):
         found_pteam (str): the player's team as string to process
         found_ppos (str): the player's position as string to process
         False (bool): false for failed execution of finding player
-    """
-    """
     Test:
         find_player('carzola')
-    """
-    """
     Fix:
 		- no fixes
     """
@@ -172,11 +157,11 @@ def find_player(pname):
             # store player data
             found_pid, found_pnum, found_pname, found_pteam, found_ppos = cursor.fetchone()
             print "log: find_player(): player found!"
-            print "log: find_player(): player id: ", found_pid
-            print "log: find_player(): player number: ", found_pnum
-            print "log: find_player(): player name: ", found_pname
-            print "log: find_player(): player team: ", found_pteam
-            print "log: find_player(): player position: ", found_ppos
+            # print "log: find_player(): player id: ", found_pid
+            # print "log: find_player(): player number: ", found_pnum
+            # print "log: find_player(): player name: ", found_pname
+            # print "log: find_player(): player team: ", found_pteam
+            # print "log: find_player(): player position: ", found_ppos
             # return player data
             return True, found_pid, found_pnum, found_pname, found_pteam, found_ppos
         # if player is not found
@@ -189,11 +174,11 @@ def find_player(pname):
 
 def player_id_generator():
     """ 
-    This function finds a player in database. 
+    This function finds a player in database.
     Opening file and searching for player line by line
     and if found, will load data to buffer, log and
-    return player number name team and position as 
-    arguments. If not found logs return False. 
+    return player number name team and position as
+    arguments. If not found logs return False.
     Args:
         pname (str): the player's name as string to process
     Returns:
@@ -203,28 +188,58 @@ def player_id_generator():
         ppos (str): the player's position as string to process
         True (bool): the successful execution of finding player
         False (bool): false for failed execution of finding player
-    """
-    """
     Test:
         player_id_generator()
-    """
-    """
     Fix:
         - no fix.
     """
-    print "log: player_id_generator(): nothing to do."
+    id = 1;
+    print "log: player_id_generator(): nothing to do.", id
     return False
 
 def list_player(pname):
-    """doc string"""
-    playerID = pname
-    player_number, player_name, player_team, player_position = find_player(playerID)
-    #player_stats = find_player(pname)
-    print "player number: ", player_number
-    print "player name: ", player_name
-    print "player team: ", player_team
-    print "player position: ", player_position
-    print "method_7"
+    """
+    This function lists all of a players details and statistics.
+    calling find_player() and determine if player was found and 
+    if returned object is a tuple. player details are returned as
+    tuple.
+    return True, player id, player number, player name,
+    player team, player position. If found, will log and return
+    player id number name team and position as arguments. If not
+    found, logs and return False.
+    Args:
+        pname (str): the player's name as string to process
+    Returns:
+        True (bool): the successful execution of listing player
+        list_pid (str): the player's internal id as string to process
+        list_pnum (str): the player's number as string to process
+        list_pname (str): the player's name as string to process
+        list_pteam (str): the player's team as string to process
+        list_ppos (str): the player's position as string to process
+        False (bool): false for failed execution of listing player
+    Test:
+        list_player('carzola')
+    Fix:
+        - no fixes
+    """
+    # pass search term
+    find_playername = pname
+    # is player found, True or False?
+    playerfound = find_player(find_playername)[0]
+    # is returned object a tuple?
+    istuple = isinstance(find_player(find_playername), tuple)
+    if istuple is True and playerfound is True:
+        # store player details
+        rval, list_pid, list_pnum, list_pname, list_pteam, list_ppos = find_player(find_playername)
+        # log action and list players
+        print "log: list_player(): listing player!"
+        print "log: list_player(): ", rval, list_pid, list_pnum, list_pname, list_pteam, list_ppos
+        # return True and player details, if successful
+        return True, list_pid, list_pnum, list_pname, list_pteam, list_ppos
+    else:
+        #if not tuple or player is not found, log action and return False
+        print "log: list_player(): player cannot be listed."
+        return False
 
 def update_player(pname, ppos_stat, pteam_stat, pnum_stat):
     """doc string"""
@@ -296,8 +311,9 @@ def get_new_player_team():
 #check_db_exists()
 #create_db()
 #add_player(pid='x0', pnum='8', pname='carzola', pteam='arsenal', ppos='mf')
-pdetails = find_player('carzola')
-print pdetails[0], pdetails[1], pdetails[2], pdetails[3], pdetails[4], pdetails[5]
+#pdetails = find_player('carzola')
+#print pdetails[0], pdetails[1], pdetails[2], pdetails[3], pdetails[4], pdetails[5]
+list_player('carzola')
 
 #if check_db_exists() != True:
 #    create_db()
